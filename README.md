@@ -285,7 +285,7 @@ This review was performed for **education and internship assessment purposes onl
 
 # 👤 Author
 
-**[Your Name]**
+**MUBASSIR**
 Cybersecurity Intern, SWYNEX Technologies
 
 ---
