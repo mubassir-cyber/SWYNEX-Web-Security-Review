@@ -92,7 +92,7 @@ curl -I http://127.0.0.1:3000
 nmap -sV -p 3000 127.0.0.1
 ```
 
-![nmap port scan result](screenshots/01-nmap-port-scan.png)
+![nmap port scan result](screenshots/07-nmap-port-scan.png)
 
 ## Step 3. Reconnaissance — HTTP response headers
 
@@ -100,7 +100,7 @@ nmap -sV -p 3000 127.0.0.1
 curl -I http://localhost:3000
 ```
 
-![HTTP response headers](screenshots/02-http-response-headers.png)
+![HTTP response headers](screenshots/06-http-response-headers.png)
 
 ## Step 4. Reconnaissance — automated misconfiguration scan
 
@@ -108,7 +108,7 @@ curl -I http://localhost:3000
 nikto -h http://localhost:3000
 ```
 
-![nikto scan results](screenshots/03-nikto-scan-results.png)
+![nikto scan results](screenshots/08-nikto-misconfig-findings.png)
 
 > Nikto also reported ~150 "potentially interesting backup/cert file" hits (e.g. `/backup.tar`, `/database.jks`). These were manually verified and triaged as **false positives**, since the target is a single-page app that returns `HTTP 200` for almost any path. Only the genuine, manually confirmed findings below were kept.
 
@@ -116,7 +116,7 @@ nikto -h http://localhost:3000
 
 Burp Suite Community Edition was configured as the browser's proxy to capture and inspect live requests before manual exploitation began.
 
-![Burp Suite capturing the login request](screenshots/04-burp-proxy-sqli-capture.png)
+![Burp Suite capturing the login request](screenshots/02-sqli-burp-proxy-capture.png)
 
 ## Step 6. Manually test and validate each finding
 
@@ -148,8 +148,8 @@ Each finding below was reproduced manually and confirmed with evidence (Steps de
 
 **Evidence:**
 
-![SQLi payload in login form](screenshots/05-sqli-login-payload.png)
-![Admin login confirmed](screenshots/06-sqli-admin-login-confirmed.png)
+![SQLi payload in login form](screenshots/01-sqli-login-payload.png)
+![Admin login confirmed](screenshots/03-sqli-admin-login-confirmed.png)
 
 The Burp Suite capture in Step 5 above shows the raw `POST /rest/user/login` request and response, including a valid session token issued for `admin@juice-sh.op`.
 
@@ -174,7 +174,7 @@ The Burp Suite capture in Step 5 above shows the raw `POST /rest/user/login` req
 
 **Evidence:**
 
-![Reflected XSS alert](screenshots/07-xss-reflected-alert.png)
+![Reflected XSS alert](screenshots/04-xss-reflected-alert.png)
 
 **Severity:** Medium — could enable session hijacking or phishing if combined with a social-engineering vector.
 
@@ -197,7 +197,7 @@ The Burp Suite capture in Step 5 above shows the raw `POST /rest/user/login` req
 
 **Evidence:**
 
-![FTP directory listing exposed](screenshots/08-ftp-sensitive-files-exposed.png)
+![FTP directory listing exposed](screenshots/05-ftp-sensitive-files-exposed.png)
 
 Files visible without authentication include `incident-support.kdbx`, `acquisitions.md`, `legal.md`, `announcement_encrypted.md`, and several `.bak` backup files.
 
@@ -219,7 +219,7 @@ Files visible without authentication include `incident-support.kdbx`, `acquisiti
 - `X-Recruiting: /#/jobs` — a non-standard header disclosing an internal path.
 - `robots.txt` discloses the sensitive `/ftp/` path rather than the path being restricted server-side.
 
-**Evidence:** See Steps 2–4 above (`screenshots/01-nmap-port-scan.png`, `screenshots/02-http-response-headers.png`, `screenshots/03-nikto-scan-results.png`).
+**Evidence:** See Steps 2–4 above (`screenshots/07-nmap-port-scan.png`, `screenshots/06-http-response-headers.png`, `screenshots/08-nikto-misconfig-findings.png`).
 
 **Severity:** Medium — individually low-impact, but weakens the application's overall security posture.
 
